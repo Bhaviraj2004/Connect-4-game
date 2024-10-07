@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect 4 Game</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .clicked {
+            background-color: #f44336; /* New color (red) */
+        }
+
+        .panel {
+            width: 320px;
+            height: 250px;
+            background-color: #312a2a;
+            margin-left: 60px;
+            justify-content: flex-end;
+            align-items: end;
+            border-radius: 10px;
+            display: none; /* Initially hidden */
+        }
+
+        #sele {
+            width: 250px;
+            height: 30px;
+            margin: 30px;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        #btn {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        #btn.enabled {
+            cursor: pointer;
+            opacity: 1;
+        }
+
+        #comp {
+            width: 270px;
+            margin-top: 70px;
+            margin-left: 20px;
+            cursor: pointer;
+        }
+
+        #comp > a {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            font-weight: 300;
+        }
+
+        #comp.disabled {
+            cursor: not-allowed;
+            opacity: 0.5; /* Optional: make it look disabled */
+            pointer-events: none; /* Ensure no interactions are possible */
+        }
+
+        #comp.enabled {
+            cursor: pointer;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="myButton" id="button1">Play with a Friend</button>
+        <button class="myButton" id="button2">Play vs Computer</button>
+        <button id="btn" disabled><a href="main.html" target="_blank">Play</a></button>
+    </div>
+
+    <div class="panel">
+        <select name="select" id="sele">
+            <option value="">Select Level</option>
+            <option value="easy">easy</option>
+            <option value="hard">hard</option>
+        </select>
+        <button id="comp" class="disabled"><a href="#" target="_blank">Play</a></button>
+    </div>
+
+    <script>
+        const buttons = document.querySelectorAll(".myButton");
+        const panel = document.querySelector(".panel");
+        const playButton = document.getElementById("btn");
+        const selectElement = document.getElementById("sele");
+        const compButton = document.getElementById("comp");
+        const compLink = compButton.querySelector("a");
+    
+        function handleButtonClick(clickedButton) {
+            const isButton1 = clickedButton.id === 'button1';
+            const isButton2 = clickedButton.id === 'button2';
+    
+            buttons.forEach(button => {
+                if (button === clickedButton) {
+                    button.classList.toggle('clicked');
+    
+                    if (isButton2) {
+                        panel.style.display = button.classList.contains('clicked') ? 'block' : 'none';
+                    } else {
+                        panel.style.display = 'none';
+                    }
+                } else {
+                    button.classList.remove('clicked');
+                }
+            });
+    
+            playButton.disabled = !document.getElementById('button1').classList.contains('clicked');
+            playButton.classList.toggle('enabled', !playButton.disabled);
+        }
+    
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                handleButtonClick(this);
+            });
+        });
+    
+        selectElement.addEventListener('change', () => {
+            if (selectElement.value) {
+                compButton.classList.remove('disabled');
+                compButton.classList.add('enabled');
+                compButton.disabled = false;
+    
+                let difficulty = selectElement.value;
+                let difficultyLevel = (difficulty === 'easy') ? 'beginner' : 'expert';
+                compLink.href = `computer.html?difficulty=${difficultyLevel}`;
+            } else {
+                compButton.classList.add('disabled');
+                compButton.classList.remove('enabled');
+                compButton.disabled = true;
+                compLink.href = '#';
+            }
+        });
+    
+        // Function to reset the select element and button state
+        function resetSelectElement() {
+            setTimeout(() => {
+                selectElement.selectedIndex = 0; // Set the select element to default
+                compButton.classList.add('disabled');
+                compButton.classList.remove('enabled');
+                compButton.disabled = true;
+                compLink.href = '#';
+            }, 8000); // 5000 milliseconds = 5 seconds
+        }
+    
+        // Call reset function on select change event
+        selectElement.addEventListener('change', () => {
+            resetSelectElement();
+        });
+    
+        // Call reset function on page load
+        window.addEventListener('load', () => {
+            resetSelectElement();
+        });
+    </script>
+    
+</body>
+</html>
